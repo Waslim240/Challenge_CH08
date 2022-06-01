@@ -31,10 +31,10 @@ class DetailLayout : ComponentActivity() {
 
 @Composable
 fun Greeting4(name: String) {
-    Text(text = "Hello $name!")
+
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DefaultPreview4() {
     ChallengeCH08Theme {
