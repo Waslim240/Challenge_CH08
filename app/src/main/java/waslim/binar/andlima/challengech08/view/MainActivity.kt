@@ -1,9 +1,11 @@
-package waslim.binar.andlima.challengech08
+package waslim.binar.andlima.challengech08.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,10 +13,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -24,9 +28,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import waslim.binar.andlima.challengech08.ui.theme.ChallengeCH08Theme
+import androidx.lifecycle.*
+import dagger.hilt.android.AndroidEntryPoint
+import waslim.binar.andlima.challengech08.R
+import waslim.binar.andlima.challengech08.model.user.DataUserResponseItem
+import waslim.binar.andlima.challengech08.network.ApiService
+import waslim.binar.andlima.challengech08.view.theme.ChallengeCH08Theme
+import waslim.binar.andlima.challengech08.viewmodel.ViewModelLogin
 
-class RegisterLayout : ComponentActivity() {
+@AndroidEntryPoint
+class MainActivity : ComponentActivity() {
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -36,7 +50,7 @@ class RegisterLayout : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting2("Android")
+                    Greeting()
                 }
             }
         }
@@ -44,19 +58,18 @@ class RegisterLayout : ComponentActivity() {
 }
 
 @Composable
-fun Greeting2(name: String) {
-    var username by remember { mutableStateOf("") }
+fun Greeting() {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var hasil by remember { mutableStateOf("") }
+    val mcontext = LocalContext.current
 
     Column( horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-        .padding(15.dp)
+        .padding(start = 15.dp, end = 15.dp, bottom = 15.dp, top = 30.dp)
         .fillMaxWidth()
-        .height(100.dp)){
+        .fillMaxSize()){
 
-        Text(text = "Register",
-            color = Color.Blue,
+        Text(text = "Login",
+            color = Color.Black,
             fontFamily = FontFamily.SansSerif,
             fontSize = 20.sp,
             textAlign = TextAlign.Center,
@@ -69,19 +82,9 @@ fun Greeting2(name: String) {
 
         Spacer(modifier = Modifier.padding(40.dp))
 
-
         OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            placeholder = { Text(text = "Masukan Username") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Username") }
-        )
-
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
+            value = email,
+            onValueChange = { email = it },
             placeholder = { Text(text = "Masukan Email") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             modifier = Modifier.fillMaxWidth(),
@@ -98,44 +101,38 @@ fun Greeting2(name: String) {
             label = { Text("Password") }
         )
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            placeholder = { Text(text = "Masukan Konfirmasi Password") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Konfirmasi Password") }
-        )
-
-        Spacer(modifier = Modifier.padding(90.dp))
-
-        val mcontext = LocalContext.current
+        Spacer(modifier = Modifier.padding(150.dp))
 
         Button(onClick = {
-            mcontext.startActivity(Intent(mcontext, MainActivity::class.java))
+            mcontext.startActivity(Intent(mcontext, HomeLayout::class.java))
         },
             modifier = Modifier
                 .border(width = 2.dp, color = Color.Black)
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(Color.Green)) {
-            Text(text = "Daftar")
+            Text(text = "Login")
         }
 
         Spacer(modifier = Modifier.padding(5.dp))
 
-        Text(text = "Sudah Punya Akun? Login Disini" , color = Color.Black, modifier = Modifier.clickable {
-            mcontext.startActivity(Intent(mcontext, MainActivity::class.java))
+        Text(text = "Belum Punya Akun? Daftar Disini" ,
+            textAlign = TextAlign.Center,
+            color = Color.Black, modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    mcontext.startActivity(Intent(mcontext, RegisterLayout::class.java))
         })
-
 
     }
 }
 
+
+
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun DefaultPreview2() {
+fun DefaultPreview() {
     ChallengeCH08Theme {
-        Greeting2("Android")
+        Greeting()
     }
 }

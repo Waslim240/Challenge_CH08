@@ -1,4 +1,4 @@
-package waslim.binar.andlima.challengech08.ui.theme
+package waslim.binar.andlima.challengech08.view.theme
 
 import androidx.compose.ui.graphics.Color
 
