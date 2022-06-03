@@ -1,6 +1,5 @@
 package waslim.binar.andlima.challengech08.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +13,6 @@ import javax.inject.Inject
 class ViewModelLogin @Inject constructor(apiService: ApiService) : ViewModel(){
 
     private val userLogin = MutableLiveData<List<DataUserResponseItem>>()
-    val login : LiveData<List<DataUserResponseItem>> = userLogin
 
     init {
         viewModelScope.launch {

@@ -2,21 +2,17 @@ package waslim.binar.andlima.challengech08.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -26,13 +22,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.*
 import dagger.hilt.android.AndroidEntryPoint
 import waslim.binar.andlima.challengech08.R
-import waslim.binar.andlima.challengech08.model.user.DataUserResponseItem
-import waslim.binar.andlima.challengech08.network.ApiService
 import waslim.binar.andlima.challengech08.view.theme.ChallengeCH08Theme
-import waslim.binar.andlima.challengech08.viewmodel.ViewModelLogin
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

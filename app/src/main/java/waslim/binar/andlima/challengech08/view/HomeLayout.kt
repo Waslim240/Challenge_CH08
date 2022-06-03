@@ -67,10 +67,10 @@ fun Home(){
         fontSize = 14.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier
+            .width(width = 130.dp)
+            .height(height = 130.dp)
             .padding(start = 20.dp, top = 20.dp)
-            .clickable {
-                mcontext.startActivity(Intent(mcontext, MainActivity::class.java))
-            }
+
     )
 
     Text(
@@ -78,7 +78,13 @@ fun Home(){
         fontSize = 15.sp,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.End,
-        modifier = Modifier.padding(end = 20.dp, top = 20.dp)
+        modifier = Modifier
+            .width(width = 130.dp)
+            .height(height = 130.dp)
+            .clickable {
+                mcontext.startActivity(Intent(mcontext, MainActivity::class.java))
+            }
+            .padding(end = 20.dp, top = 20.dp)
     )
 
     Column(modifier = Modifier
@@ -105,6 +111,8 @@ fun Home(){
 
 @Composable
 fun ListFilm(data : DataFilmResponseItem) {
+    val mcontext = LocalContext.current
+
     Column(modifier = Modifier
         .padding(start = 15.dp, end = 15.dp, bottom = 5.dp)) {
 
@@ -112,6 +120,11 @@ fun ListFilm(data : DataFilmResponseItem) {
             backgroundColor = Color.Green,
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable {
+                    val pindah = Intent(mcontext, DetailLayout::class.java)
+                    pindah.putExtra("detailfilm", data)
+                    mcontext.startActivity(pindah)
+                }
                 .fillMaxSize() ) {
 
             Row(modifier = Modifier
@@ -126,7 +139,7 @@ fun ListFilm(data : DataFilmResponseItem) {
                         .height(70.dp)
                         .padding(end = 10.dp))
 
-                Column() {
+                Column {
                     Text(
                         text = "Judul : ${data.title}",
                         color = Color.Black,
@@ -158,5 +171,6 @@ fun ListFilm(data : DataFilmResponseItem) {
 fun DefaultPreview3() {
     ChallengeCH08Theme {
         Home()
+        ListFilm(data = DataFilmResponseItem("","","","","",""))
     }
 }

@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    const val BASE_URL = "https://6254434619bc53e2347b936f.mockapi.io/"
+    private const val BASE_URL = "https://6254434619bc53e2347b936f.mockapi.io/"
 
     private  val logging : HttpLoggingInterceptor
         get(){
