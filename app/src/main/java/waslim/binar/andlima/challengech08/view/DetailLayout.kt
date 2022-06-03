@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -19,7 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.hdodenhof.circleimageview.CircleImageView
 import waslim.binar.andlima.challengech08.R
 import waslim.binar.andlima.challengech08.view.theme.ChallengeCH08Theme
 
@@ -94,6 +95,7 @@ fun Greeting4() {
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.ExtraBold,
             modifier = Modifier.fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(top = 10.dp))
     }
 
