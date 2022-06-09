@@ -1,8 +1,15 @@
 package waslim.binar.andlima.challengech08.view
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -11,17 +18,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import dagger.hilt.android.AndroidEntryPoint
+import waslim.binar.andlima.challengech08.R
+import waslim.binar.andlima.challengech08.datastore.DataUserManager
 import waslim.binar.andlima.challengech08.model.film.DataFilmResponseItem
 import waslim.binar.andlima.challengech08.view.theme.ChallengeCH08Theme
 import waslim.binar.andlima.challengech08.viewmodel.ViewModelFilm
@@ -46,51 +51,65 @@ class HomeLayout : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Home()
+                    Text()
                 }
             }
         }
     }
 }
 
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun Home(){
-    val viewModelFilm = viewModel(modelClass = ViewModelFilm::class.java)
-    val dataListFilm by viewModelFilm.dataState.collectAsState()
+private fun Text(){
     val mcontext = LocalContext.current
+    val dataUserManager = DataUserManager(mcontext)
+    val dataUsername = dataUserManager.username.collectAsState(initial = "username")
+    val activity = (LocalContext.current as? Activity)
+
 
     Text(
-        text = "Welcome, Username",
-        textAlign = TextAlign.Start,
+        text = "Welcome, ${dataUsername.value}",
         color = Color.Black,
         fontStyle = FontStyle.Italic,
         fontSize = 14.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier
-            .width(width = 130.dp)
-            .height(height = 130.dp)
-            .padding(start = 20.dp, top = 20.dp)
+            .width(width = 50.dp)
+            .padding(start = 20.dp, end = 2.dp, top = 20.dp)
 
     )
 
-    Text(
-        text = "Logout",
-        fontSize = 15.sp,
-        fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.End,
-        modifier = Modifier
-            .width(width = 130.dp)
-            .height(height = 130.dp)
-            .clickable {
-                mcontext.startActivity(Intent(mcontext, MainActivity::class.java))
+    Row(modifier = Modifier
+        .fillMaxSize()
+        .padding(10.dp),
+        horizontalArrangement = Arrangement.End) {
+
+        IconButton(
+            onClick = {
+                    mcontext.startActivity(Intent(mcontext, ProfileLayout::class.java))
+                    activity?.finish()
             }
-            .padding(end = 20.dp, top = 20.dp)
-    )
+        ) {
+            Image(painter = painterResource(id = R.drawable.ic_baseline_account_circle_24), contentDescription = "")
+        }
+    }
+
+    Home()
+
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun Home(){
+    val viewModelFilm = viewModel(modelClass = ViewModelFilm::class.java)
+    val dataListFilm by viewModelFilm.dataState.collectAsState()
 
     Column(modifier = Modifier
         .fillMaxWidth()
         .fillMaxSize()
-        .padding(top = 70.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        .padding(top = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+
         Text(
             text = "HOME",
             fontSize = 20.sp,
@@ -110,14 +129,14 @@ fun Home(){
 
 
 @Composable
-fun ListFilm(data : DataFilmResponseItem) {
+private fun ListFilm(data : DataFilmResponseItem) {
     val mcontext = LocalContext.current
 
     Column(modifier = Modifier
         .padding(start = 15.dp, end = 15.dp, bottom = 5.dp)) {
 
-        Card(shape = RoundedCornerShape(5.dp),
-            backgroundColor = Color.Green,
+        Card(shape = RoundedCornerShape(3.dp),
+            backgroundColor = Color.Transparent,
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
@@ -141,36 +160,68 @@ fun ListFilm(data : DataFilmResponseItem) {
 
                 Column {
                     Text(
-                        text = "Judul : ${data.title}",
+                        text = data.title,
                         color = Color.Black,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(start = 5.dp))
+                        modifier = Modifier.padding(start = 8.dp))
 
                     Text(
-                        text = "Tanggal Rilis : ${data.createdAt}",
+                        text = data.createdAt,
                         color = Color.Red,
-                        fontSize = 10.sp,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(start = 5.dp))
+                        modifier = Modifier.padding(start = 8.dp))
 
                     Text(
-                        text = "Produser : ${data.director}",
+                        text = data.director,
                         color = Color.Black,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(start = 5.dp))
+                        modifier = Modifier.padding(start = 8.dp))
                 }
             }
         }
     }
+
+    BackPressHandler()
 }
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun DefaultPreview3() {
-    ChallengeCH08Theme {
-        Home()
-        ListFilm(data = DataFilmResponseItem("","","","","",""))
+private fun BackPressHandler(
+    backPressedDispatcher: OnBackPressedDispatcher? =
+        LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+) {
+    var doubleBackToExit = false
+    val mcontext = LocalContext.current
+    val activity = (LocalContext.current as? Activity)
+
+
+    val backCallback = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (doubleBackToExit){
+                    activity?.finish()
+                } else {
+                    doubleBackToExit = true
+                    Toast.makeText(mcontext, "Tekan Lagi Untuk Keluar", Toast.LENGTH_SHORT).show()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        kotlin.run {
+                            doubleBackToExit = false
+                        }
+                    }, 2000)
+                }
+            }
+        }
+    }
+
+    DisposableEffect(key1 = backPressedDispatcher) {
+        backPressedDispatcher?.addCallback(backCallback)
+
+        onDispose {
+            backCallback.remove()
+        }
     }
 }
+

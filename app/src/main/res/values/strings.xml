@@ -3,4 +3,9 @@
     <string name="title_activity_register_layout">RegisterLayout</string>
     <string name="title_activity_home_layout">HomeLayout</string>
     <string name="title_activity_detail_layout">DetailLayout</string>
+    <string name="title_activity_profile_layout">ProfileLayout</string>
+    <string name="title_activity_splash_screen_layout">SplashScreenLayout</string>
+    <string name="title_activity_player_video">PlayerVideo</string>
+    <string name="title_activity_video_player">VideoPlayer</string>
+    <string name="title_activity_favorite_layout">FavoriteLayout</string>
 </resources>

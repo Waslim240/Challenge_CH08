@@ -1,8 +1,15 @@
 package waslim.binar.andlima.challengech08.view
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -19,18 +26,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import waslim.binar.andlima.challengech08.R
+import waslim.binar.andlima.challengech08.datastore.DataUserManager
+import waslim.binar.andlima.challengech08.model.user.DataUserResponseItem
 import waslim.binar.andlima.challengech08.view.theme.ChallengeCH08Theme
+import waslim.binar.andlima.challengech08.viewmodel.ViewModelLogin
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -40,7 +48,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting()
+                    Login()
                 }
             }
         }
@@ -48,29 +56,48 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting() {
+private fun Login(){
+    val viewModelLogin = viewModel(modelClass = ViewModelLogin::class.java)
+    val dataListLogin by viewModelLogin.dataState.collectAsState()
+    Greeting(dataUser = dataListLogin)
+}
+
+
+@Composable
+private fun Greeting(dataUser : List<DataUserResponseItem>) {
+    val context = LocalContext.current
+    val activity = (LocalContext.current as? Activity)
+    val scope = rememberCoroutineScope()
+    val dataUserManager = DataUserManager(context)
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val mcontext = LocalContext.current
 
-    Column( horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(start = 15.dp, end = 15.dp, bottom = 15.dp, top = 30.dp)
-                .fillMaxWidth()
-                .fillMaxSize()){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(start = 15.dp, end = 15.dp, bottom = 15.dp, top = 30.dp)
+            .fillMaxWidth()
+    ){
 
-        Text(text = "Login",
+        Text(
+            text = "Login",
             color = Color.Black,
             fontFamily = FontFamily.SansSerif,
-            fontSize = 20.sp,
+            fontSize = 23.sp,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.ExtraBold,
-            modifier = Modifier.fillMaxWidth())
+            modifier = Modifier.fillMaxWidth()
+        )
 
-        Spacer(modifier = Modifier.padding(10.dp))
+        Spacer(modifier = Modifier.padding(15.dp))
 
-        Image(painter = painterResource(id = R.drawable.ic_launcher_background), contentDescription = "iconregist")
+        Image(
+            modifier = Modifier
+                .size(140.dp),
+            painter = painterResource(id = R.drawable.img),
+            contentDescription = "iconregist"
+        )
 
         Spacer(modifier = Modifier.padding(40.dp))
 
@@ -93,38 +120,184 @@ fun Greeting() {
             label = { Text("Password") }
         )
 
-        Spacer(modifier = Modifier.padding(150.dp))
+        Spacer(modifier = Modifier.padding(120.dp))
 
         Button(onClick = {
-            mcontext.startActivity(Intent(mcontext, HomeLayout::class.java))
+            //logika 4
+            when {
+                email.isEmpty() -> {
+                    Toast.makeText(context, "Isi Email Anda", Toast.LENGTH_SHORT).show()
+                }
+                password.isEmpty() -> {
+                    Toast.makeText(context, "Isi Password Anda", Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    for (i in dataUser.indices){
+                        when {
+                            email != dataUser[i].email -> {
+                                Toast.makeText(context, "Email Salah", Toast.LENGTH_SHORT).show()
+                            }
+                            password != dataUser[i].password -> {
+                                Toast.makeText(context, "Password Salah", Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {
+                                scope.launch {
+                                    dataUserManager.saveData(
+                                        dataUser[i].id,
+                                        dataUser[i].username,
+                                        email,
+                                        password,
+                                        dataUser[i].fullName,
+                                        dataUser[i].dateOfBirth,
+                                        dataUser[i].address,
+                                        dataUser[i].image
+                                    )
+                                }
+                                context.startActivity(Intent(context, HomeLayout::class.java))
+                                activity?.finish()
+                                Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }
+            }
+
+            //logika 3
+//            if (email.isNotEmpty() && password.isNotEmpty()){
+//                if (dataListLogin.isNotEmpty()){
+//                    if (email != dataListLogin[0].email ){
+//                        Toast.makeText(mcontext, "Email Salah", Toast.LENGTH_SHORT).show()
+//                    } else if (password != dataListLogin[0].password){
+//                        Toast.makeText(mcontext, "Password Salah", Toast.LENGTH_SHORT).show()
+//                    } else {
+//                        mcontext.startActivity(Intent(mcontext, HomeLayout::class.java))
+//                        Toast.makeText(mcontext, "Login Berhasil", Toast.LENGTH_SHORT).show()
+//                    }
+//                } else {
+//                    Toast.makeText(mcontext, "Data kosong", Toast.LENGTH_SHORT).show()
+//                }
+//            } else if (email.isEmpty()){
+//                Toast.makeText(mcontext, "Isi Email Anda", Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(mcontext, "Isi Password Anda", Toast.LENGTH_SHORT).show()
+//            }
+
+            //logika 2
+//            when {
+//                email.isNotEmpty() && password.isNotEmpty() -> {
+//                    when {
+//                        dataListLogin.isNullOrEmpty() -> {
+//                            Toast.makeText(mcontext, "Data Kosong", Toast.LENGTH_SHORT).show()
+//                        }
+//                        else -> {
+//                            when {
+//                                dataListLogin.size > 1 -> {
+//                                    Toast.makeText(mcontext, "Data Salah", Toast.LENGTH_SHORT).show()
+//                                }
+//                                email != dataListLogin[0].email -> {
+//                                    Toast.makeText(mcontext, "Email Salah", Toast.LENGTH_SHORT).show()
+//                                }
+//                                password != dataListLogin[0].password -> {
+//                                    Toast.makeText(mcontext, "Password Salah", Toast.LENGTH_SHORT).show()
+//                                }
+//                                else -> {
+//                                    mcontext.startActivity(Intent(mcontext, HomeLayout::class.java))
+//                                    Toast.makeText(mcontext, "Login Berhasil", Toast.LENGTH_SHORT).show()
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                email.isEmpty() -> {
+//                    Toast.makeText(mcontext, "Isi Email Anda", Toast.LENGTH_SHORT).show()
+//                }
+//                else -> {
+//                    Toast.makeText(mcontext, "Isi Password Anda", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+
+
+
+
+            //logika 1
+//              if (email.isNotEmpty() && password.isNotEmpty()){
+//                  if (dataListLogin.isEmpty()){
+//                      Toast.makeText(mcontext, "Data kosong", Toast.LENGTH_SHORT).show()
+//                  } else {
+//                      mcontext.startActivity(Intent(mcontext, HomeLayout::class.java))
+//                      Toast.makeText(mcontext, "Login Berhasil", Toast.LENGTH_SHORT).show()
+//                  }
+//              } else if (email.isEmpty()){
+//                  Toast.makeText(mcontext, "Isi Email Anda", Toast.LENGTH_SHORT).show()
+//              } else if (password.isEmpty()){
+//                  Toast.makeText(mcontext, "Isi Password Anda", Toast.LENGTH_SHORT).show()
+//              }
+
         },
             modifier = Modifier
-                .border(width = 2.dp, color = Color.Black)
+                .border(width = 1.dp, color = Color.Black)
                 .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(Color.Green)) {
-            Text(text = "Login")
+            colors = ButtonDefaults.buttonColors(Color.Gray)
+        ) {
+            Text(
+                text = "Login",
+                color = Color.White
+            )
         }
 
         Spacer(modifier = Modifier.padding(5.dp))
 
-        Text(text = "Belum Punya Akun? Daftar Disini" ,
+        Text(
+            text = "Belum Punya Akun? Daftar Disini" ,
             textAlign = TextAlign.Center,
+            fontSize = 14.sp,
             color = Color.Black, modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    mcontext.startActivity(Intent(mcontext, RegisterLayout::class.java))
-        })
-
+                    context.startActivity(Intent(context, RegisterLayout::class.java))
+                    activity?.finish()
+                }
+        )
     }
+
+    BackPressHandler()
 }
 
 
-
-
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun DefaultPreview() {
-    ChallengeCH08Theme {
-        Greeting()
+private fun BackPressHandler(
+    backPressedDispatcher: OnBackPressedDispatcher? =
+        LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+) {
+    var doubleBackToExit = false
+    val mcontext = LocalContext.current
+    val activity = (LocalContext.current as? Activity)
+
+    val backCallback = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (doubleBackToExit){
+                    activity?.finish()
+                } else {
+                    doubleBackToExit = true
+                    Toast.makeText(mcontext, "Tekan Lagi Untuk Keluar", Toast.LENGTH_SHORT).show()
+
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        kotlin.run {
+                            doubleBackToExit = false
+                        }
+                    }, 2000)
+                }
+            }
+        }
+    }
+
+    DisposableEffect(key1 = backPressedDispatcher) {
+        backPressedDispatcher?.addCallback(backCallback)
+
+        onDispose {
+            backCallback.remove()
+        }
     }
 }
+

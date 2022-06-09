@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress ALL -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="waslim.binar.andlima.challengech08">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
         android:name=".di.MyApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -15,6 +16,38 @@
         android:theme="@style/Theme.ChallengeCH08"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity
+            android:name=".view.FavoriteLayout"
+            android:exported="false"
+            android:label="@string/title_activity_favorite_layout"
+            android:theme="@style/Theme.ChallengeCH08" />
+        <activity
+            android:name=".view.VideoPlayer"
+            android:exported="false"
+            android:label="@string/title_activity_video_player"
+            android:theme="@style/Theme.ChallengeCH08" />
+        <activity
+            android:name=".view.PlayerVideo"
+            android:exported="false"
+            android:label="@string/title_activity_player_video"
+            android:theme="@style/Theme.ChallengeCH08"
+            tools:ignore="MissingClass" />
+        <activity
+            android:name=".view.SplashScreenLayout"
+            android:exported="true"
+            android:label="@string/title_activity_splash_screen_layout"
+            android:theme="@style/Theme.ChallengeCH08">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".view.ProfileLayout"
+            android:exported="false"
+            android:label="@string/title_activity_profile_layout"
+            android:theme="@style/Theme.ChallengeCH08" />
         <activity
             android:name=".view.DetailLayout"
             android:exported="false"
@@ -33,13 +66,7 @@
         <activity
             android:name=".view.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ChallengeCH08">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.ChallengeCH08" />
     </application>
 
 </manifest>
