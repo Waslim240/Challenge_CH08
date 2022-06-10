@@ -168,7 +168,7 @@ private fun Daftar() {
             colors = ButtonDefaults.buttonColors(Color.Gray)
         ) {
             Text(
-                text = "Login",
+                text = "Daftar",
                 color = Color.White
             )
         }

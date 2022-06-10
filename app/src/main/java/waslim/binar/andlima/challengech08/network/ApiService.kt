@@ -9,14 +9,15 @@ import waslim.binar.andlima.challengech08.model.user.DataUserResponseItem
 import waslim.binar.andlima.challengech08.model.user.PostUser
 
 interface ApiService {
-    // get login
+    // login, get data user
     @GET("user")
     suspend fun getDataLogin() : List<DataUserResponseItem>
 
+    //post data user
     @POST("user")
     fun postDataRegister(@Body postUser: PostUser) : Call<PostUser>
 
-    // get list film
+    // get data list film
     @GET("film")
     suspend fun getDataFilm() : List<DataFilmResponseItem>
 }
